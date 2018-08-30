@@ -10,3 +10,12 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+/.metadata/
+/.recommenders/
+RemoteSystemsTempFiles/
+bin/
+build/
+reports/
+.project
+.classpath
+.gradle

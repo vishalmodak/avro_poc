@@ -10,6 +10,7 @@ services:
       - "2181:2181"
     networks:
       - lss
+    tty: true
 
   kafka:
     image: wurstmeister/kafka
@@ -19,7 +20,7 @@ services:
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=kafka
 #      KAFKA_ADVERTISED_PORT: 9092
-      - KAFKA_CREATE_TOPICS="test:1:1"
+      - KAFKA_CREATE_TOPICS="loan:1:1,payment:1:1,intake:1:1"
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -27,6 +28,7 @@ services:
       - lss
     depends_on:
       - zookeeper
+    tty: true
 
   trifecta:
     image: janschultecom/docker-trifecta
@@ -39,15 +41,28 @@ services:
       - lss
     depends_on:
       - zookeeper
+    tty: true
 
-#
-#  consumer:
-#    image: wurstmeister/kafka
-#    depends_on:
-#      - kafka
-#    command: [ "sh", "-c", "sleep 10 && $$KAFKA_HOME/bin/kafka-console-consumer.sh --topic=test --zookeeper=zookeeper:2181" ]
-#    networks:
-#      - lss
+  json-generator:
+   build: ./docker/json-gen
+   image: json-data-generator
+   container_name: json-gen
+   depends_on:
+     - kafka
+   volumes:
+     - ./docker/json-gen/logs:/json-data-generator/logs
+     - ./docker/json-gen/conf:/json-data-generator/conf
+   networks:
+     - lss
+   tty: true
+
+  # consumer:
+  #  image: wurstmeister/kafka
+  #  depends_on:
+  #    - kafka
+  #  command: [ "sh", "-c", "sleep 10 && $$KAFKA_HOME/bin/kafka-console-consumer.sh --topic=loan --zookeeper=zookeeper:2181" ]
+  #  networks:
+  #    - lss
 #  producer:
 #    image: wurstmeister/kafka
 #    depends_on:

@@ -1,0 +1,18 @@
+{
+  "workflows": [
+    {
+      "workflowName": "loan",
+      "workflowFilename": "loan-flow.json"
+    }
+  ],
+  "producers": [
+    {
+      "type": "kafka",
+      "broker.server": "kafka",
+      "broker.port": 9092,
+      "topic": "loan",
+      "flatten": false,
+      "sync": false
+    }
+  ]
+}

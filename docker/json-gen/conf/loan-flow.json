@@ -1,0 +1,20 @@
+{
+  "eventFrequency": 100,
+  "varyEventFrequency": false,
+  "repeatWorkflow": true,
+  "timeBetweenRepeat": 10000,
+  "varyRepeatFrequency": true,
+  "stepRunMode": "sequential",
+  "steps": [
+    {
+      "config": [
+        {
+          "loan": {
+            "loanNumber": "random('2015CA169772974','2018AL834723571','2018AL834723571','2018GA152651571')"
+          }
+        }
+      ],
+      "duration": 0
+    }
+  ]
+}
