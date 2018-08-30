@@ -1,0 +1,21 @@
+{
+    "loan": {
+        "status": "current",
+        "calledDue": false,
+        "dateClosed": null,
+        "dateOpened": "2015-11-23",
+        "loanNumber": "2015CA169772974",
+        "daysPastDue": 0,
+        "currentOwner": "netcredit",
+        "transferFrom": null,
+        "sourceAccountNumber": "8601860",
+        "amountPastDueInCents": 0,
+        "currentBalanceInCents": 334117,
+        "lastPaymentContingent": false,
+        "transferEffectiveDate": "2015-11-21",
+        "calledDueAmountInCents": 0,
+        "oustandingBalanceCents": 334117,
+        "inCollectionBeforeClosed": false,
+        "originalLoanAmountInCents": 673000
+    }
+}

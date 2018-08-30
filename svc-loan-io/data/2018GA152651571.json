@@ -1,0 +1,21 @@
+{
+    "loan": {
+        "status": "current",
+        "calledDue": false,
+        "dateClosed": null,
+        "dateOpened": "2018-02-01",
+        "loanNumber": "2018GA152651571",
+        "daysPastDue": 0,
+        "currentOwner": "netcredit",
+        "transferFrom": null,
+        "sourceAccountNumber": "13719753",
+        "amountPastDueInCents": 0,
+        "currentBalanceInCents": 345031,
+        "lastPaymentContingent": false,
+        "transferEffectiveDate": "2018-01-30",
+        "calledDueAmountInCents": 0,
+        "oustandingBalanceCents": 345031,
+        "inCollectionBeforeClosed": false,
+        "originalLoanAmountInCents": 350000
+    }
+}

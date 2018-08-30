@@ -19,3 +19,4 @@ reports/
 .project
 .classpath
 .gradle
+**/gradle

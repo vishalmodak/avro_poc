@@ -1,0 +1,21 @@
+{
+    "loan": {
+        "status": "current",
+        "calledDue": false,
+        "dateClosed": null,
+        "dateOpened": "2018-06-28",
+        "loanNumber": "2018AL834723571",
+        "daysPastDue": 0,
+        "currentOwner": "netcredit",
+        "transferFrom": null,
+        "sourceAccountNumber": "14884694",
+        "amountPastDueInCents": 0,
+        "currentBalanceInCents": 346644,
+        "lastPaymentContingent": false,
+        "transferEffectiveDate": "2018-06-26",
+        "calledDueAmountInCents": 0,
+        "oustandingBalanceCents": 346644,
+        "inCollectionBeforeClosed": false,
+        "originalLoanAmountInCents": 337000
+    }
+}
