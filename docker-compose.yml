@@ -44,17 +44,33 @@ services:
     tty: true
 
   json-generator:
-   build: ./docker/json-gen
-   image: json-data-generator
-   container_name: json-gen
-   depends_on:
+    build: ./docker/json-gen
+    image: json-data-generator
+    container_name: json-gen
+    depends_on:
      - kafka
-   volumes:
-     - ./docker/json-gen/logs:/json-data-generator/logs
-     - ./docker/json-gen/conf:/json-data-generator/conf
-   networks:
-     - lss
-   tty: true
+    volumes:
+      - ./docker/json-gen/logs:/json-data-generator/logs
+      - ./docker/json-gen/conf:/json-data-generator/conf
+    networks:
+      - lss
+    tty: true
+
+  loan:
+    build:
+      context: ./svc-loan-io
+      dockerfile: Dockerfile
+    image: svc-loan
+    container_name: svc-loan
+    depends_on:
+      - kafka
+    ports:
+      - 8000:8080
+    networks:
+      - lss
+    environment:
+      - KAFKA_BROKER_HOST=kafka
+    tty: true
 
   # consumer:
   #  image: wurstmeister/kafka

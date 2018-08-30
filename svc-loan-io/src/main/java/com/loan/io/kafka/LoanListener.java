@@ -1,4 +1,4 @@
-package com.loan.io.listener;
+package com.loan.io.kafka;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,9 @@ import com.jayway.jsonpath.JsonPath;
 @Service
 public class LoanListener {
     private static final Logger log = LoggerFactory.getLogger(LoanListener.class);
+    
+    @Autowired
+    private LoanPublisher loanPublisher;
     
     Map<String, String> loanMap = new HashMap<>();
     
@@ -41,9 +45,12 @@ public class LoanListener {
         }
     }
 
-    @KafkaListener(topics="${kafka.topic.boot}")
+    @KafkaListener(topics="${kafka.topic.consume}")
     public void processMessage(String message) {
         log.info("LoanNumber: " + message);
-        log.info(loanMap.get(message));
+        String loanNumber = JsonPath.read(message, "$.loan.loanNumber");
+        String loan = loanMap.get(loanNumber);
+        log.info(loan);
+        loanPublisher.send(loan);
     }
 }

@@ -19,4 +19,5 @@ reports/
 .project
 .classpath
 .gradle
+.mvn
 **/gradle

@@ -1,16 +1,12 @@
-package com.loan.io;
+package com.payment.io;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.kafka.annotation.EnableKafka;
 
 @SpringBootApplication
-@EnableKafka
-public class SvcLoanIoApplication {
+public class SvcPaymentIoApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SvcLoanIoApplication.class, args);
+		SpringApplication.run(SvcPaymentIoApplication.class, args);
 	}
-	
-
 }
