@@ -56,6 +56,21 @@ services:
       - lss
     tty: true
 
+  process-mgr:
+    build:
+      context: ./svc-process-mgr
+      dockerfile: Dockerfile
+    image: svc-process-mgr
+    container_name: svc-process-mgr
+    depends_on:
+      - kafka
+    networks:
+      - lss
+    environment:
+      - KAFKA_BROKER_URI=kafka:9092
+      - TOPIC_NAME=intake
+    tty: true
+
   loan:
     build:
       context: ./svc-loan-io
@@ -72,6 +87,21 @@ services:
       - KAFKA_BROKER_HOST=kafka
     tty: true
 
+  payment:
+    build:
+      context: ./svc-payment-io
+      dockerfile: Dockerfile
+    image: svc-loan
+    container_name: svc-payment
+    depends_on:
+      - kafka
+    ports:
+      - 9000:8080
+    networks:
+      - lss
+    environment:
+      - KAFKA_BROKER_HOST=kafka
+    tty: true
   # consumer:
   #  image: wurstmeister/kafka
   #  depends_on:

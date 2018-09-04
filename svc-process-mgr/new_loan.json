@@ -1,0 +1,31 @@
+{
+  "process": "NewLoan",
+  "product": "BLOC",
+  "version": "v1",
+  "steps": [
+    {
+      "id": 1,
+      "name": "CreateLoan",
+      "action": "custom",
+      "type": "Loan",
+    },
+    {
+      "id": 2,
+      "name": "IssueFunding",
+      "action": "custom",
+      "stepType": "Payment",
+    },
+    {
+      "id": 2,
+      "name": "Send Email",
+      "action": "email",
+      "type": "Email",
+    },
+    {
+      "id": 2,
+      "name": "Report MMetro2",
+      "action": "event",
+      "type": "Report",
+    }
+  ]
+}
