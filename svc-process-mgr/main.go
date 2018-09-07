@@ -15,25 +15,28 @@ var (
 	topic     string
 	brokerURI string
 	logLevel  string
+	logger    *log.Logger
 )
 
 func init() {
 	gotenv.Load()
-
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.DebugLevel)
+	logger = log.New()
+	// log.SetOutput(os.Stdout)
+	logger.SetLevel(log.DebugLevel)
 
 	topic = os.Getenv("TOPIC_NAME")
-	log.Debug("TOPIC_NAME: ", topic)
+	logger.Debug("TOPIC_NAME: ", topic)
 	brokerURI = os.Getenv("KAFKA_BROKER_URI")
-	log.Debug("KAFKA_BROKER_URI: ", topic)
+	logger.Debug("KAFKA_BROKER_URI: ", topic)
 }
 
 func main() {
 	flag.Parse()
-	log.Info("Servicing Process Manager started....")
+	logger.Info("Servicing Process Manager started....")
 
-	startIntakeListener()
+	//go startIntakeListener()
+
+	ExecuteProcess()
 }
 
 func startIntakeListener() {
@@ -51,10 +54,10 @@ func startIntakeListener() {
 	for {
 		m, err := r.ReadMessage(context.Background())
 		if err != nil {
-			log.Error(err)
+			logger.Error(err)
 			break
 		}
-		log.Printf("message at offset %d: %s = %s", m.Offset, string(m.Key), string(m.Value))
+		logger.Printf("message at offset %d: %s = %s", m.Offset, string(m.Key), string(m.Value))
 	}
 
 	r.Close()
