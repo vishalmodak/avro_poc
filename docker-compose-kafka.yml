@@ -1,0 +1,67 @@
+version: '3.4'
+
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - lss
+    tty: true
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=kafka
+#      KAFKA_ADVERTISED_PORT: 9092
+      - KAFKA_CREATE_TOPICS="loan:1:1,payment:1:1,intake:1:1"
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - lss
+    depends_on:
+      - zookeeper
+    tty: true
+
+  schema-registry-host:
+    image: confluentinc/cp-schema-registry:4.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL: none
+
+  # trifecta:
+  #   image: janschultecom/docker-trifecta
+  #   container_name: trifecta-ui
+  #   ports:
+  #     - 11000:9000
+  #   environment:
+  #     - ZK_HOST=zookeeper:2181
+  #   networks:
+  #     - lss
+  #   depends_on:
+  #     - zookeeper
+  #   tty: true
+  #
+  # consumer:
+  #   image: wurstmeister/kafka
+  #   depends_on:
+  #    - kafka
+  #   command: [ "sh", "-c", "sleep 10 && $$KAFKA_HOME/bin/kafka-console-consumer.sh --topic=loan --zookeeper=zookeeper:2181" ]
+  #   networks:
+  #    - lss
+  #
+  # producer:
+  #   image: wurstmeister/kafka
+  #   depends_on:
+  #    - kafka
+  #   command: [ "sh", "-c", "sleep 15 && echo 'hello kafka' | $$KAFKA_HOME/bin/kafka-console-producer.sh --topic=test --broker-list=kafka:9092" ]
+  #   networks:
+  #    - lss
