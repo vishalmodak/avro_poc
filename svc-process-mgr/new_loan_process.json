@@ -1,1 +1,36 @@
-{"name":"NewLoan","stages":[{"name":"LoanStage","steps":[{"ID":1,"Name":"Loan Transition to ISSUE"},{"ID":2,"Name":"Save Loan"}],"concurrent":false,"disableStrictMode":false},{"name":"PaymentStage","steps":[{"ID":3,"Name":"Create Payment"},{"ID":4,"Name":"Send Payment"}],"concurrent":true,"disableStrictMode":false}],"DrainTimeout":5000000000}
+{
+  "name": "NewLoan",
+  "stages": [
+    {
+      "name": "LoanStage",
+      "steps": [
+        {
+          "ID": 1,
+          "Name": "Loan Transition to ISSUE"
+        },
+        {
+          "ID": 2,
+          "Name": "Save Loan"
+        }
+      ],
+      "concurrent": false,
+      "disableStrictMode": false
+    },
+    {
+      "name": "PaymentStage",
+      "steps": [
+        {
+          "ID": 3,
+          "Name": "Create Payment"
+        },
+        {
+          "ID": 4,
+          "Name": "Send Payment"
+        }
+      ],
+      "concurrent": true,
+      "disableStrictMode": false
+    }
+  ],
+  "DrainTimeout": 5000000000
+}

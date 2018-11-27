@@ -70,17 +70,13 @@ func readPipeline(pipe *pipeline.Pipeline) {
 }
 
 func ExecuteProcess() {
-	// workpipe := readProcessDefinition()
-	// log.Info("%+v", workpipe)
 	workpipe := buildPipeline()
 	go readPipeline(workpipe)
 	result := workpipe.Run()
 	if result.Error != nil {
 		logger.Info(result.Error)
 	}
-
 	logger.Info("timeTaken:", workpipe.GetDuration())
-
 }
 
 func readProcessDefinition() (pipe *pipeline.Pipeline) {

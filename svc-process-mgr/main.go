@@ -34,9 +34,13 @@ func main() {
 	flag.Parse()
 	logger.Info("Servicing Process Manager started....")
 
-	//go startIntakeListener()
+	go startIntakeListener()
 
-	ExecuteProcess()
+	go ExecuteProcess()
+}
+
+func startWorkPipeline() {
+
 }
 
 func startIntakeListener() {
