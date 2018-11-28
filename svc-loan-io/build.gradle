@@ -4,14 +4,21 @@ buildscript {
 	}
 	repositories {
 		mavenCentral()
+		jcenter()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("org.apache.avro:avro-compiler:1.8.2")
+		classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.9.0"
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
+plugins {
+  id "java"
+  id "eclipse"
+  id "com.commercehub.gradle.plugin.avro" version "0.9.0"
+}
+
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
@@ -21,12 +28,30 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven { url "http://packages.confluent.io/maven/" }
 }
 
+task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
+    source("src/main/resources/avro")
+    outputDir = file("build/generated-main-avro-java")
+}
+
+compileJava.source(generateAvro.outputs)
+compileTestJava.source(generateAvro.outputs)
+sourceSets.main.java.srcDirs = ['build/generated-main-avro-java','src/main/java']
+
 dependencies {
+    compile("org.springframework.cloud:spring-cloud-stream-schema:2.0.2.RELEASE")
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.kafka:spring-kafka')
+	compile('org.apache.avro:avro:1.8.2')
+	compile("io.confluent:kafka-schema-registry-client:5.0.0")
+	compile("io.confluent:kafka-avro-serializer:5.0.0") { 
+	   exclude group:"org.slf4j", module:"slf4j-api"
+	   exclude group:"org.slf4j", module:"slf4j-log4j12"
+	}
+	compile group: 'tech.allegro.schema.json2avro', name: 'converter', version: '0.2.8'
 	
 	compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 	

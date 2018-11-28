@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        output:
+          contentType: application/*+avro
+          destination: loan
+      schemaRegistryClient:
+        endpoint: http://localhost:8081
+      schema:
+        avro:
+          schema-locations: classpath:avro/loan.avsc

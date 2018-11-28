@@ -1,4 +1,6 @@
 version: '3.4'
+networks:
+  lss:
 
 services:
   zookeeper:
@@ -30,25 +32,30 @@ services:
 
   schema-registry-host:
     image: confluentinc/cp-schema-registry:4.0.0
+    depends_on:
+      - kafka
+      - zookeeper
     ports:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL: none
+    networks:
+      - lss
 
-  # trifecta:
-  #   image: janschultecom/docker-trifecta
-  #   container_name: trifecta-ui
-  #   ports:
-  #     - 11000:9000
-  #   environment:
-  #     - ZK_HOST=zookeeper:2181
-  #   networks:
-  #     - lss
-  #   depends_on:
-  #     - zookeeper
-  #   tty: true
+  trifecta:
+    image: janschultecom/docker-trifecta
+    container_name: trifecta-ui
+    ports:
+      - 11000:9000
+    environment:
+      - ZK_HOST=zookeeper:2181
+    networks:
+      - lss
+    depends_on:
+      - zookeeper
+    tty: true
   #
   # consumer:
   #   image: wurstmeister/kafka
