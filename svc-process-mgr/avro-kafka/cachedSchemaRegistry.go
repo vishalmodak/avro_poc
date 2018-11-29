@@ -1,4 +1,4 @@
-package kafka
+package avrokafka
 
 import (
 	"github.com/linkedin/goavro"
