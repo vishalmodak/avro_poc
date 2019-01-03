@@ -2,7 +2,6 @@ spring:
   cloud:
     stream:
       bindings:
-        output:
           contentType: application/*+avro
           destination: loan
       schemaRegistryClient:

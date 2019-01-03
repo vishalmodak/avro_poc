@@ -8,14 +8,13 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 @Service
@@ -37,7 +36,8 @@ public class LoanListener {
                 try {
                     json = new String(Files.readAllBytes(file));
                     String loanNumber = JsonPath.read(json, "$.loan.loanNumber");
-                    loanMap.put(loanNumber, json);
+                    String loanJson = new ObjectMapper().writeValueAsString(JsonPath.read(json, "$.loan"));
+                    loanMap.put(loanNumber, loanJson);  
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
