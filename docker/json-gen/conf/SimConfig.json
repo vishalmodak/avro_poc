@@ -9,7 +9,7 @@
     {
       "type": "kafka",
       "broker.server": "kafka",
-      "broker.port": 9092,
+      "broker.port": 29092,
       "topic": "loan",
       "flatten": false,
       "sync": false

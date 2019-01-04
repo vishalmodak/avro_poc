@@ -18,15 +18,14 @@ services:
   #     dockerfile: Dockerfile
   #   image: svc-process-mgr
   #   container_name: svc-process-mgr
-  #   depends_on:
-  #     - kafka
   #   networks:
-  #     - lss
+  #     - lss_poc_lss
   #   environment:
-  #     - KAFKA_BROKER_URI=kafka:9092
+  #     - KAFKA_BROKER_URI=kafka:29092
   #     - TOPIC_NAME=intake
+  #     - SCHEMA_REGISTRY_URI=schema-registry-host:8081
   #   tty: true
-  #
+
   loan:
     build:
       context: ./svc-loan-io
@@ -38,10 +37,10 @@ services:
     networks:
       - lss_poc_lss
     environment:
-      - KAFKA_BROKER_HOST=kafka
-      - SCHEMA_REGISTRY_HOST=schema-registry-host
+      - KAFKA_BROKER_URL=kafka:29092
+      - SCHEMA_REGISTRY_URL=http://schema-registry-host:8081
     tty: true
-  #
+
   # payment:
   #   build:
   #     context: ./svc-payment-io

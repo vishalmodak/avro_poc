@@ -21,3 +21,4 @@ reports/
 .gradle
 .mvn
 **/gradle
+debug
