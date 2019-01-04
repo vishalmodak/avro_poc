@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "namespace": "com.lss.models",
+  "name": "Loan",
+  "version": "1",
+  "fields": [
+    { "name": "status", "type": "string", "doc": "loan status", "default": ""},
+    { "name": "calledDue", "type": "boolean", "default": true, "doc": "" },
+    { "name": "dateClosed", "type": "string", "doc": "", "default": "" },
+    { "name": "dateOpened", "type": "string", "doc": "", "default": "" },
+    { "name": "loanNumber", "type": "string", "doc": "", "default": "" },
+    { "name": "daysPastDue", "type": "int", "doc": "", "default": 0 },
+    { "name": "currentOwner", "type": "string", "doc": "", "default": "" },
+    { "name": "transferFrom", "type": "string", "doc": "", "default": "" },
+    { "name": "sourceAccountNumber", "type": "string", "doc": "", "default": "" },
+    { "name": "amountPastDueInCents", "type": "int", "doc": "", "default": 0 },
+    { "name": "currentBalanceInCents", "type": "int", "default": 0, "doc": "" },
+    { "name": "lastPaymentContingent", "type": "boolean", "default": false, "doc": "" },
+    { "name": "transferEffectiveDate", "type": "string", "doc": "", "default": "" },
+    { "name": "calledDueAmountInCents", "type": "int", "doc": "", "default": 0 },
+    { "name": "oustandingBalanceCents", "type": "int", "doc": "", "default": 0 },
+    { "name": "inCollectionBeforeClosed", "type": "boolean", "default": false, "doc": "" },
+    { "name": "originalLoanAmountInCents", "type": "int", "default": 0, "doc": "" }
+  ]
+}
