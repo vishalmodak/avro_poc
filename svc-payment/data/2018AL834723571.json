@@ -1,0 +1,31 @@
+{
+    "payments": [
+        {
+            "paid": true,
+            "datePaid": "2018-07-25",
+            "loanNumber": "2018AL834723571",
+            "amountInCents": 13660,
+            "sourceAccountNumber": "14884694",
+            "sourcePaymentNumber": "8651377",
+            "sourceObligationNumber": "37641141"
+        },
+        {
+            "paid": true,
+            "datePaid": "2018-08-08",
+            "loanNumber": "2018AL834723571",
+            "amountInCents": 13660,
+            "sourceAccountNumber": "14884694",
+            "sourcePaymentNumber": "8773841",
+            "sourceObligationNumber": "37641142"
+        },
+        {
+            "paid": true,
+            "datePaid": "2018-08-22",
+            "loanNumber": "2018AL834723571",
+            "amountInCents": 13660,
+            "sourceAccountNumber": "14884694",
+            "sourcePaymentNumber": "8929709",
+            "sourceObligationNumber": "37641143"
+        }
+    ]
+}

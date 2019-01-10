@@ -1,0 +1,5 @@
+{
+  "name": "svc-payment",
+  "private": true,
+  "dependencies": {}
+}
