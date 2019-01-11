@@ -1,0 +1,35 @@
+{
+  "type": "record",
+  "namespace": "com.lss.models",
+  "name": "Payment",
+  "fields": [
+    {
+      "name": "paid",
+      "type": "boolean"
+    },
+    {
+      "name": "datePaid",
+      "type": "string"
+    },
+    {
+      "name": "loanNumber",
+      "type": "string"
+    },
+    {
+      "name": "amountInCents",
+      "type": "int"
+    },
+    {
+      "name": "sourceAccountNumber",
+      "type": "string"
+    },
+    {
+      "name": "sourcePaymentNumber",
+      "type": "string"
+    },
+    {
+      "name": "sourceObligationNumber",
+      "type": "string"
+    }
+  ]
+}
