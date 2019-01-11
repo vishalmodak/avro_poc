@@ -20,6 +20,7 @@ class App < Karafka::App
     config.kafka.seed_brokers = [ENV['KAFKA_HOST'] || 'kafka://localhost:9092']
     config.client_id = 'svc-payment'
     config.logger = Rails.logger
+    config.backend = :sidekiq
   end
 
   after_init do

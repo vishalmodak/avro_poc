@@ -36,6 +36,8 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
+gem 'sidekiq'
+
 gem 'avro-builder', '~> 0.8'
 gem 'avromatic'
 gem 'avro_turf'
@@ -43,6 +45,7 @@ gem 'waterdrop'
 gem 'karafka'
 gem 'json'
 gem 'jsonpath'
+gem 'karafka-sidekiq-backend'
 # gem 'ruby-kafka', '~> 0.6.8' #recommended with karafka for kafka 0.10
 
 group :development, :test do
