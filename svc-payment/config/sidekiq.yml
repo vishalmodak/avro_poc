@@ -3,9 +3,22 @@
 
 :timeout: 30
 
+:queues:
+  - background
+
 production:
   :concurrency: 25
 staging:
   :concurrency: 15
 test:
   :concurrency: 20
+
+
+# tasks: &tasks
+#   LoanConsumerWorker:
+#     # cron: '*/30 * * * *' does not work on ubuntu
+#     every: ["1s"]
+#     queue: background
+# 
+# :schedule:
+#   <<: *tasks

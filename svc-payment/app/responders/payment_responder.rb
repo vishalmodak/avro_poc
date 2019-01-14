@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Payment
-  # Responder triggered from within the PingConsumer
   class PaymentResponder < ApplicationResponder
     topic :payment
 

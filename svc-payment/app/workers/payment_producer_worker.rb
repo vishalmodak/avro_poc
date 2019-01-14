@@ -1,5 +1,5 @@
-class PaymentProducerWorker
-  include Sidekiq::Worker
+class PaymentProducerWorker < ApplicationWorker
+  # include Sidekiq::Worker
   sidekiq_options retry: false
 
   def perform

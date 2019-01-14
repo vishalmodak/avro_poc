@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "Loan",
+  "namespace": "com.lss.models",
+  "fields": [
+    {
+      "name": "loanNumber",
+      "type": "string",
+      "doc": "",
+      "default": ""
+    },
+    {
+      "name": "sourceAccountNumber",
+      "type": "string",
+      "doc": "",
+      "default": ""
+    }
+  ]
+}
