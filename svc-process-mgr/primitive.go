@@ -12,10 +12,6 @@ import (
 	"math"
 )
 
-type ByteReader interface {
-	ReadByte() (byte, error)
-}
-
 type ByteWriter interface {
 	Grow(int)
 	WriteByte(byte) error
@@ -71,71 +67,10 @@ func encodeInt(w io.Writer, byteCount int, encoded uint64) error {
 
 }
 
-func readBool(r io.Reader) (bool, error) {
-	var b byte
-	var err error
-	if br, ok := r.(ByteReader); ok {
-		b, err = br.ReadByte()
-	} else {
-		bs := make([]byte, 1)
-		_, err = io.ReadFull(r, bs)
-		if err != nil {
-			return false, err
-		}
-		b = bs[0]
-	}
-	return b == 1, nil
-}
-
-func readInt(r io.Reader) (int32, error) {
-	var v int
-	buf := make([]byte, 1)
-	for shift := uint(0); ; shift += 7 {
-		if _, err := io.ReadFull(r, buf); err != nil {
-			return 0, err
-		}
-		b := buf[0]
-		v |= int(b&127) << shift
-		if b&128 == 0 {
-			break
-		}
-	}
-	datum := (int32(v>>1) ^ -int32(v&1))
-	return datum, nil
-}
-
 func readLoan(r io.Reader) (*Loan, error) {
 	var str = &Loan{}
 	var err error
-	str.Status, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
-	str.CalledDue, err = readBool(r)
-	if err != nil {
-		return nil, err
-	}
-	str.DateClosed, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
-	str.DateOpened, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
 	str.LoanNumber, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
-	str.DaysPastDue, err = readInt(r)
-	if err != nil {
-		return nil, err
-	}
-	str.CurrentOwner, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
-	str.TransferFrom, err = readString(r)
 	if err != nil {
 		return nil, err
 	}
@@ -143,35 +78,7 @@ func readLoan(r io.Reader) (*Loan, error) {
 	if err != nil {
 		return nil, err
 	}
-	str.AmountPastDueInCents, err = readInt(r)
-	if err != nil {
-		return nil, err
-	}
-	str.CurrentBalanceInCents, err = readInt(r)
-	if err != nil {
-		return nil, err
-	}
-	str.LastPaymentContingent, err = readBool(r)
-	if err != nil {
-		return nil, err
-	}
-	str.TransferEffectiveDate, err = readString(r)
-	if err != nil {
-		return nil, err
-	}
-	str.CalledDueAmountInCents, err = readInt(r)
-	if err != nil {
-		return nil, err
-	}
-	str.OustandingBalanceCents, err = readInt(r)
-	if err != nil {
-		return nil, err
-	}
-	str.InCollectionBeforeClosed, err = readBool(r)
-	if err != nil {
-		return nil, err
-	}
-	str.OriginalLoanAmountInCents, err = readInt(r)
+	str.CurrentOwner, err = readString(r)
 	if err != nil {
 		return nil, err
 	}
@@ -220,64 +127,9 @@ func readString(r io.Reader) (string, error) {
 	return string(bb), nil
 }
 
-func writeBool(r bool, w io.Writer) error {
-	var b byte
-	if r {
-		b = byte(1)
-	}
-
-	var err error
-	if bw, ok := w.(ByteWriter); ok {
-		err = bw.WriteByte(b)
-	} else {
-		bb := make([]byte, 1)
-		bb[0] = b
-		_, err = w.Write(bb)
-	}
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func writeInt(r int32, w io.Writer) error {
-	downShift := uint32(31)
-	encoded := uint64((uint32(r) << 1) ^ uint32(r>>downShift))
-	const maxByteSize = 5
-	return encodeInt(w, maxByteSize, encoded)
-}
-
 func writeLoan(r *Loan, w io.Writer) error {
 	var err error
-	err = writeString(r.Status, w)
-	if err != nil {
-		return err
-	}
-	err = writeBool(r.CalledDue, w)
-	if err != nil {
-		return err
-	}
-	err = writeString(r.DateClosed, w)
-	if err != nil {
-		return err
-	}
-	err = writeString(r.DateOpened, w)
-	if err != nil {
-		return err
-	}
 	err = writeString(r.LoanNumber, w)
-	if err != nil {
-		return err
-	}
-	err = writeInt(r.DaysPastDue, w)
-	if err != nil {
-		return err
-	}
-	err = writeString(r.CurrentOwner, w)
-	if err != nil {
-		return err
-	}
-	err = writeString(r.TransferFrom, w)
 	if err != nil {
 		return err
 	}
@@ -285,35 +137,7 @@ func writeLoan(r *Loan, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = writeInt(r.AmountPastDueInCents, w)
-	if err != nil {
-		return err
-	}
-	err = writeInt(r.CurrentBalanceInCents, w)
-	if err != nil {
-		return err
-	}
-	err = writeBool(r.LastPaymentContingent, w)
-	if err != nil {
-		return err
-	}
-	err = writeString(r.TransferEffectiveDate, w)
-	if err != nil {
-		return err
-	}
-	err = writeInt(r.CalledDueAmountInCents, w)
-	if err != nil {
-		return err
-	}
-	err = writeInt(r.OustandingBalanceCents, w)
-	if err != nil {
-		return err
-	}
-	err = writeBool(r.InCollectionBeforeClosed, w)
-	if err != nil {
-		return err
-	}
-	err = writeInt(r.OriginalLoanAmountInCents, w)
+	err = writeString(r.CurrentOwner, w)
 	if err != nil {
 		return err
 	}
