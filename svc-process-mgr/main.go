@@ -123,7 +123,7 @@ func startSaramaConsumer() {
 	logger.Print("Connected to kafka broker")
 
 	for m := range partitionConsumer.Messages() {
-		readAvroMessage(m.Value)
+		readAvroMessage4(m.Value)
 	}
 }
 
@@ -159,7 +159,8 @@ func readAvroMessage(encodedMsg []byte) {
 //uses github.com/elodina/go-kafka-avro
 //doesnt work
 //Actual output
-// main.Loan{LoanNumber:"current", SourceAccountNumber:"", CurrentOwner:""}
+//    main.Loan{LoanNumber:"current", SourceAccountNumber:"", CurrentOwner:""}
+//    &main.Payment{LoanNumber:"", AmountInCents:0, SourceAccountNumber:"", SourcePaymentNumber:"", SourceObligationNumber:""}
 func readAvroMessage2(encodedMsg []byte) {
 	decoder := kavro.NewKafkaAvroDecoder(schemaRegistryURI)
 	// decoded, err := decoder.Decode(encodedMsg)
@@ -172,12 +173,12 @@ func readAvroMessage2(encodedMsg []byte) {
 	// }
 	// logger.Printf("%v", decodedRecord)
 
-	loan := new(Loan)
-	err := decoder.DecodeSpecific(encodedMsg, loan)
+	payment := new(Payment)
+	err := decoder.DecodeSpecific(encodedMsg, payment)
 	if err != nil {
 		logger.Errorf("Failure decoding avro: %s", err)
 	}
-	logger.Printf("%#v", *loan)
+	logger.Printf("%#v", payment)
 }
 
 //uses https://github.com/actgardner/gogen-avro
@@ -199,9 +200,14 @@ func readAvroMessage3(encodedMsg []byte) {
 //doesnt work
 //Actual output
 //   &main.Loan{LoanNumber:"current", SourceAccountNumber:""}
+//   &main.Payment{LoanNumber:"", AmountInCents:17, SourceAccountNumber:"aid\":true,\"datePaid\":\"2015-12-23\",
+//     \"loanNumber\":\"2015CA16", SourcePaymentNumber:"", SourceObligationNumber:""}
+//   &main.Payment{Paid:false, DatePaid:"paid\":true,\"dateP", LoanNumber:"", AmountInCents:-53, SourceAccountNumber:"\":\"2015-12-23\",
+//     \"loanNumber\":\"2015CA169772974\",\"amo", SourcePaymentNumber:"", SourceObligationNumber:"tInCents\":12151,
+//     \"sourceAccountNumber\":\"8601860\",\"source"}
 func readAvroMessage4(encodedMsg []byte) {
-	err := ioutil.WriteFile("input-file", encodedMsg, 0644)
-	schema, err := gavro.ParseSchemaFile("loan.avsc")
+
+	schema, err := gavro.ParseSchemaFile("payment.avsc")
 	if err != nil {
 		// Should not happen if the schema is valid
 		logger.Errorf("Failure parsing schema: %s", err)
@@ -210,10 +216,10 @@ func readAvroMessage4(encodedMsg []byte) {
 	// SetSchema must be called before calling Read
 	reader.SetSchema(schema)
 	// Create a new Decoder with a given buffer
-	decoder := gavro.NewBinaryDecoder(encodedMsg[5:])
+	decoder := gavro.NewBinaryDecoder(encodedMsg)
 
 	// Create a new TestRecord to decode data into
-	decodedRecord := new(Loan)
+	decodedRecord := new(Payment)
 
 	// Read data into a given record with a given Decoder.
 	err = reader.Read(decodedRecord, decoder)
