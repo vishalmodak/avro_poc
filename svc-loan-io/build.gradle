@@ -9,14 +9,14 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath("org.apache.avro:avro-compiler:1.8.2")
-		classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.9.0"
+		classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.9.1"
 	}
 }
 
 plugins {
   id "java"
   id "eclipse"
-  id "com.commercehub.gradle.plugin.avro" version "0.9.0"
+  id "com.commercehub.gradle.plugin.avro" version "0.9.1"
 }
 
 apply plugin: 'org.springframework.boot'
@@ -30,6 +30,7 @@ repositories {
 	mavenCentral()
 	maven { url "http://packages.confluent.io/maven/" }
 }
+
 
 task generateAvro(type: com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask) {
     source("src/main/resources/avro")
