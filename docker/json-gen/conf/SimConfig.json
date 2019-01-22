@@ -10,7 +10,15 @@
       "type": "kafka",
       "broker.server": "kafka",
       "broker.port": 29092,
-      "topic": "loan",
+      "topic": "loan_intake",
+      "flatten": false,
+      "sync": false
+    },
+    {
+      "type": "kafka",
+      "broker.server": "kafka",
+      "broker.port": 29092,
+      "topic": "payment_intake",
       "flatten": false,
       "sync": false
     }

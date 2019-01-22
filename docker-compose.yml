@@ -39,6 +39,9 @@ services:
     environment:
       - KAFKA_BROKER_URL=kafka:29092
       - SCHEMA_REGISTRY_URL=http://schema-registry-host:8081
+      - LOAN_TOPIC_CONSUME=loan_intake
+      - LOAN_TOPIC_PRODUCE=loan
+      - PAYMENT_TOPIC_CONSUME=payment
     tty: true
 
   # payment:
