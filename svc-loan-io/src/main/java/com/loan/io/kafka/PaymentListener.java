@@ -23,14 +23,14 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
 @Service
 public class PaymentListener {
-    
+
     private static final Logger log = LoggerFactory.getLogger(PaymentListener.class);
-    
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String brokerAddress;
     @Value("${spring.kafka.consumer.properties.schema.registry.url}")
     private String schemaRegistryURL;
-    
+
     @Bean
     @ConditionalOnMissingBean(name="paymentConsumerFactory")
     public ConsumerFactory<Object, Object> paymentConsumerFactory() {
@@ -55,9 +55,9 @@ public class PaymentListener {
        return factory;
     }
 
-    @KafkaListener(id="paymentlistener", topics="payment", groupId = "payment", containerFactory = "paymentListenerFactory")
+    @KafkaListener(id="paymentlistener", topics="${payment.topic.consume}", groupId = "payment", containerFactory = "paymentListenerFactory")
     public void processMessage(ConsumerRecord<String, Payment> message) {
         log.info("Payment: " + message.value());
     }
-    
+
 }

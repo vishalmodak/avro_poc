@@ -28,27 +28,27 @@ import com.jayway.jsonpath.JsonPath;
 @Service
 public class LoanListener {
     private static final Logger log = LoggerFactory.getLogger(LoanListener.class);
-    
+
     @Autowired
     private LoanPublisher loanPublisher;
-    
+
     @Value("${spring.kafka.bootstrap-servers}")
     private String brokerAddress;
-    
+
     Map<String, String> loanMap = new HashMap<>();
-    
+
     @PostConstruct
     public void readMockData() {
         try {
             Files.walk(Paths.get("data"))
             .filter(Files::isRegularFile)
-            .forEach(file -> { 
+            .forEach(file -> {
                 String json;
                 try {
                     json = new String(Files.readAllBytes(file));
                     String loanNumber = JsonPath.read(json, "$.loan.loanNumber");
                     String loanJson = new ObjectMapper().writeValueAsString(JsonPath.read(json, "$.loan"));
-                    loanMap.put(loanNumber, loanJson);  
+                    loanMap.put(loanNumber, loanJson);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -58,14 +58,14 @@ public class LoanListener {
         }
     }
 
-    @KafkaListener(id="loanlistener", topics="${kafka.topic.consume}", groupId = "loan", containerFactory = "loanListenerFactory")
+    @KafkaListener(id="loanlistener", topics="${loan.topic.consume}", groupId = "loan", containerFactory = "loanListenerFactory")
     public void processMessage(String message) {
         log.info("LoanNumber: " + message);
         String loanNumber = JsonPath.read(message, "$.loan.loanNumber");
         String loan = loanMap.get(loanNumber);
         loanPublisher.send(loan);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name="loanConsumerFactory")
     public ConsumerFactory<String, String> loanConsumerFactory() {
@@ -76,7 +76,7 @@ public class LoanListener {
        props.put(ConsumerConfig.GROUP_ID_CONFIG, "loan");
        return new DefaultKafkaConsumerFactory<>(props);
     }
-    
+
     @Bean(name = "loanListenerFactory")
     public ConcurrentKafkaListenerContainerFactory<String, String> loanListenerFactory() {
        ConcurrentKafkaListenerContainerFactory<String, String> factory =

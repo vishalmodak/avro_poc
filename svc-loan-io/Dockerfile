@@ -3,6 +3,9 @@ MAINTAINER vishal
 
 ENV KAFKA_BROKER_URL=localhost:9092 \
     SCHEMA_REGISTRY_URL=http://localhost:8081 \
+    LOAN_TOPIC_CONSUME=loanIn \
+    LOAN_TOPIC_PRODUCE=loanOut \
+    PAYMENT_TOPIC_CONSUME=paymentIn \
     appDir=/usr/src/app
 
 RUN mkdir -p $appDir
@@ -16,6 +19,9 @@ CMD ["java", \
             "-Dspring.kafka.bootstrap-servers=${KAFKA_BROKER_URL}", \
             "-Dspring.kafka.producer.properties.schema.registry.url=${SCHEMA_REGISTRY_URL}", \
             "-Dspring.kafka.consumer.properties.schema.registry.url=${SCHEMA_REGISTRY_URL}", \
+            "-Dloan.topic.consume=${LOAN_TOPIC_CONSUME}", \
+            "-Dloan.topic.produce=${LOAN_TOPIC_PRODUCE}", \
+            "-Dpayment.topic.produce=${PAYMENT_TOPIC_CONSUME}", \
             "-Dspring.cloud.stream.schemaRegistryClient.endpoint=${SCHEMA_REGISTRY_URL}", \
             "-jar", \
             "svc-loan-io.jar"]
