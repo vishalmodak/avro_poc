@@ -1,5 +1,5 @@
-FROM golang:1.9-alpine as builder
-RUN apk add --update glide git
+FROM golang:1.10-stretch as builder
+RUN apt-get install git
 ENV appDir=/go/src/lss_poc/svc-process-mgr
 RUN mkdir -p $appDir
 WORKDIR $appDir
@@ -8,11 +8,12 @@ RUN go get .
 RUN go build .
 CMD ["/go/src/lss_poc/svc-process-mgr/svc-process-mgr"]
 
-FROM alpine:latest
+FROM golang:1.10-stretch
 ENV TZ Etc/GMT
-RUN apk add --update tzdata
-RUN apk --no-cache add ca-certificates
+RUN apt-get install tzdata
+# RUN apt-get --no-cache add ca-certificates
 WORKDIR /root
+COPY --from=builder /go/src/lss_poc/svc-process-mgr/*.avsc /root/
 COPY --from=builder /go/src/lss_poc/svc-process-mgr/svc-process-mgr .
 CMD ["./svc-process-mgr"]
 EXPOSE 9000

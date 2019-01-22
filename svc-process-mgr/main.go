@@ -3,25 +3,25 @@ package main
 import (
 	// "encoding/json"
 	"bytes"
-	"context"
 	"flag"
 	"github.com/Shopify/sarama"
 	// avro "github.com/elodina/go-avro"
 	kavro "github.com/elodina/go-kafka-avro"
 	goavro "github.com/linkedin/goavro"
-	"github.com/segmentio/kafka-go"
+	// "github.com/segmentio/kafka-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
 	gavro "gopkg.in/avro.v0"
 	"io/ioutil"
-	lg "log"
+	// lg "log"
 	// "lss_poc/svc-process-mgr/avro-kafka"
 	"os"
 	"strings"
 )
 
 var (
-	topic             string
+	loanTopic         string
+	paymentTopic      string
 	brokerURI         string
 	logLevel          string
 	logger            *log.Logger
@@ -34,8 +34,10 @@ func init() {
 	// log.SetOutput(os.Stdout)
 	logger.SetLevel(log.DebugLevel)
 
-	topic = os.Getenv("TOPIC_NAME")
-	logger.Debug("TOPIC_NAME: ", topic)
+	loanTopic = os.Getenv("LOAN_TOPIC_NAME")
+	logger.Debug("LOAN_TOPIC_NAME: ", loanTopic)
+	paymentTopic = os.Getenv("PAYMENT_TOPIC_NAME")
+	logger.Debug("PAYMENT_TOPIC_NAME: ", paymentTopic)
 	brokerURI = os.Getenv("KAFKA_BROKER_URI")
 	logger.Debug("KAFKA_BROKER_URI: ", brokerURI)
 	schemaRegistryURI = os.Getenv("SCHEMA_REGISTRY_URI")
@@ -46,45 +48,20 @@ func main() {
 	flag.Parse()
 	logger.Info("Servicing Process Manager started....")
 
-	// startIntakeListener()
+	go startLoanConsumer()
 
 	// go ExecuteProcess()
 
-	startSaramaConsumer()
+	startPaymentConsumer()
 }
 
-func startIntakeListener() {
-	// make a new reader that consumes
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{brokerURI},
-		Topic:     topic,
-		Partition: 0,
-		MinBytes:  10e3, // 10KB
-		MaxBytes:  10e6, // 10MB
-	})
-	//Setting the offset ot -1 means to seek to the first offset. Setting the offset to -2 means to seek to the last offset.
-	r.SetOffset(-2)
-
-	for {
-		m, err := r.ReadMessage(context.Background())
-		if err != nil {
-			logger.Error(err)
-			break
-		}
-		logger.Printf("message at offset %d: %s = %s", m.Offset, string(m.Key), string(m.Value))
-		readAvroMessage2(m.Value)
-	}
-
-	r.Close()
-}
-
-func startSaramaConsumer() {
+func startLoanConsumer() {
 	config := sarama.NewConfig()
 	// config.Producer.Partitioner = sarama.NewManualPartitioner
 	config.Consumer.Return.Errors = true
 
 	//verbose debugging (comment this line to disabled verbose sarama logging)
-	sarama.Logger = lg.New(os.Stdout, "[sarama] ", lg.LstdFlags)
+	// sarama.Logger = lg.New(os.Stdout, "[sarama] ", lg.LstdFlags)
 
 	var producerURL []string
 	if strings.Contains(brokerURI, ",") {
@@ -104,13 +81,13 @@ func startSaramaConsumer() {
 		}
 	}()
 
-	partitions, err := consumer.Partitions(topic)
+	partitions, err := consumer.Partitions(loanTopic)
 	if err != nil {
 		logger.Fatalf("Failed to get partitions: %s", err)
 	}
-	logger.Printf("%d partitions for topic: %s", len(partitions), topic)
+	logger.Printf("%d partitions for topic: %s", len(partitions), loanTopic)
 
-	partitionConsumer, err := consumer.ConsumePartition(topic, 0, sarama.OffsetNewest)
+	partitionConsumer, err := consumer.ConsumePartition(loanTopic, 0, sarama.OffsetNewest)
 	if err != nil {
 		logger.Errorf("Failed to consume partition: %s", err)
 	}
@@ -120,7 +97,56 @@ func startSaramaConsumer() {
 			log.Fatalln(err)
 		}
 	}()
-	logger.Print("Connected to kafka broker")
+	logger.Print("Started Loan Consumer...")
+
+	for m := range partitionConsumer.Messages() {
+		readAvroLoan(m.Value)
+	}
+}
+
+func startPaymentConsumer() {
+	config := sarama.NewConfig()
+	// config.Producer.Partitioner = sarama.NewManualPartitioner
+	config.Consumer.Return.Errors = true
+
+	//verbose debugging (comment this line to disabled verbose sarama logging)
+	// sarama.Logger = lg.New(os.Stdout, "[sarama] ", lg.LstdFlags)
+
+	var producerURL []string
+	if strings.Contains(brokerURI, ",") {
+		producerURL = strings.Split(brokerURI, ",")
+	} else {
+		producerURL = append(producerURL, brokerURI)
+	}
+
+	consumer, err := sarama.NewConsumer(producerURL, config)
+	if err != nil {
+		logger.Fatalf("Failed to start consumer: %s", err)
+	}
+
+	defer func() {
+		if err := consumer.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	partitions, err := consumer.Partitions(paymentTopic)
+	if err != nil {
+		logger.Fatalf("Failed to get partitions: %s", err)
+	}
+	logger.Printf("%d partitions for topic: %s", len(partitions), paymentTopic)
+
+	partitionConsumer, err := consumer.ConsumePartition(paymentTopic, 0, sarama.OffsetNewest)
+	if err != nil {
+		logger.Errorf("Failed to consume partition: %s", err)
+	}
+
+	defer func() {
+		if err := partitionConsumer.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+	logger.Print("Started Payment Consumer....")
 
 	for m := range partitionConsumer.Messages() {
 		readAvroMessage4(m.Value)
@@ -212,7 +238,7 @@ func readAvroMessage4(encodedMsg []byte) {
 	// 	// Should not happen if the schema is valid
 	// 	logger.Errorf("Failure parsing schema: %s", err)
 	// }
-	payment_schema, err := gavro.ParseSchemaFile("payment.avsc")
+	payment_schema, err := gavro.ParseSchemaFile("loan.avsc")
 	if err != nil {
 		// Should not happen if the schema is valid
 		logger.Errorf("Failure parsing schema: %s", err)
@@ -224,6 +250,35 @@ func readAvroMessage4(encodedMsg []byte) {
 	decoder := gavro.NewBinaryDecoder(encodedMsg)
 
 	decodedRecord := new(Payment)
+
+	// Read data into a given record with a given Decoder.
+	err = reader.Read(decodedRecord, decoder)
+	if err != nil {
+		logger.Errorf("Failure decoding avro: %s", err)
+	}
+
+	logger.Printf("%#v\n", decodedRecord)
+}
+
+func readAvroLoan(encodedMsg []byte) {
+
+	// payment_list_schema, err := gavro.ParseSchemaFile("payment_list.avsc")
+	// if err != nil {
+	// 	// Should not happen if the schema is valid
+	// 	logger.Errorf("Failure parsing schema: %s", err)
+	// }
+	loan_schema, err := gavro.ParseSchemaFile("loan.avsc")
+	if err != nil {
+		// Should not happen if the schema is valid
+		logger.Errorf("Failure parsing schema: %s", err)
+	}
+	reader := gavro.NewSpecificDatumReader()
+	// SetSchema must be called before calling Read
+	reader.SetSchema(loan_schema)
+	// Create a new Decoder with a given buffer
+	decoder := gavro.NewBinaryDecoder(encodedMsg)
+
+	decodedRecord := new(Loan)
 
 	// Read data into a given record with a given Decoder.
 	err = reader.Read(decodedRecord, decoder)
