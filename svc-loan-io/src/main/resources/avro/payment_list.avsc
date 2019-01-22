@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "namespace": "com.lss.models",
+  "name": "PaymentList",
+  "fields": [
+      {
+        "name": "payments",
+        "type": {
+            "type": "array",
+            "items": "com.lss.models.Payment"
+        },
+        "default": []
+      }
+  ]
+}
