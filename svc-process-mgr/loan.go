@@ -2,6 +2,7 @@
 /*
  * SOURCES:
  *     payment.avsc
+ *     payment_list.avsc
  *     loan.avsc
  */
 

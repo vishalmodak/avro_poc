@@ -207,18 +207,22 @@ func readAvroMessage3(encodedMsg []byte) {
 //     \"sourceAccountNumber\":\"8601860\",\"source"}
 func readAvroMessage4(encodedMsg []byte) {
 
-	schema, err := gavro.ParseSchemaFile("payment.avsc")
+	// payment_list_schema, err := gavro.ParseSchemaFile("payment_list.avsc")
+	// if err != nil {
+	// 	// Should not happen if the schema is valid
+	// 	logger.Errorf("Failure parsing schema: %s", err)
+	// }
+	payment_schema, err := gavro.ParseSchemaFile("payment.avsc")
 	if err != nil {
 		// Should not happen if the schema is valid
 		logger.Errorf("Failure parsing schema: %s", err)
 	}
 	reader := gavro.NewSpecificDatumReader()
 	// SetSchema must be called before calling Read
-	reader.SetSchema(schema)
+	reader.SetSchema(payment_schema)
 	// Create a new Decoder with a given buffer
 	decoder := gavro.NewBinaryDecoder(encodedMsg)
 
-	// Create a new TestRecord to decode data into
 	decodedRecord := new(Payment)
 
 	// Read data into a given record with a given Decoder.

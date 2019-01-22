@@ -2,6 +2,7 @@
 /*
  * SOURCES:
  *     payment.avsc
+ *     payment_list.avsc
  *     loan.avsc
  */
 
@@ -70,6 +71,36 @@ func encodeInt(w io.Writer, byteCount int, encoded uint64) error {
 	}
 	return nil
 
+}
+
+func readArrayPayment(r io.Reader) ([]*Payment, error) {
+	var err error
+	var blkSize int64
+	var arr = make([]*Payment, 0)
+	for {
+		blkSize, err = readLong(r)
+		if err != nil {
+			return nil, err
+		}
+		if blkSize == 0 {
+			break
+		}
+		if blkSize < 0 {
+			blkSize = -blkSize
+			_, err = readLong(r)
+			if err != nil {
+				return nil, err
+			}
+		}
+		for i := int64(0); i < blkSize; i++ {
+			elem, err := readPayment(r)
+			if err != nil {
+				return nil, err
+			}
+			arr = append(arr, elem)
+		}
+	}
+	return arr, nil
 }
 
 func readBool(r io.Reader) (bool, error) {
@@ -176,6 +207,17 @@ func readPayment(r io.Reader) (*Payment, error) {
 	return str, nil
 }
 
+func readPayment_list(r io.Reader) (*Payment_list, error) {
+	var str = &Payment_list{}
+	var err error
+	str.Payments, err = readArrayPayment(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return str, nil
+}
+
 func readString(r io.Reader) (string, error) {
 	len, err := readLong(r)
 	if err != nil {
@@ -198,6 +240,20 @@ func readString(r io.Reader) (string, error) {
 		return "", err
 	}
 	return string(bb), nil
+}
+
+func writeArrayPayment(r []*Payment, w io.Writer) error {
+	err := writeLong(int64(len(r)), w)
+	if err != nil || len(r) == 0 {
+		return err
+	}
+	for _, e := range r {
+		err = writePayment(e, w)
+		if err != nil {
+			return err
+		}
+	}
+	return writeLong(0, w)
 }
 
 func writeBool(r bool, w io.Writer) error {
@@ -279,6 +335,15 @@ func writePayment(r *Payment, w io.Writer) error {
 		return err
 	}
 	err = writeString(r.SourceObligationNumber, w)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func writePayment_list(r *Payment_list, w io.Writer) error {
+	var err error
+	err = writeArrayPayment(r.Payments, w)
 	if err != nil {
 		return err
 	}
