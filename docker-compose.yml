@@ -30,8 +30,8 @@ services:
     build:
       context: ./svc-loan-io
       dockerfile: Dockerfile
-    image: svc-loan
-    container_name: svc-loan
+    image: svc-loan-io
+    container_name: svc-loan-io
     ports:
       - 8000:8080
     networks:
@@ -45,8 +45,8 @@ services:
   #   build:
   #     context: ./svc-payment-io
   #     dockerfile: Dockerfile
-  #   image: svc-loan
-  #   container_name: svc-payment
+  #   image: payment-svc
+  #   container_name: payment-svc
   #   depends_on:
   #     - kafka
   #   ports:
