@@ -15,6 +15,7 @@ CMD ["java", \
             "-Djava.security.egd=file:/dev/./urandom", \
             "-Dspring.kafka.bootstrap-servers=${KAFKA_BROKER_URL}", \
             "-Dspring.kafka.producer.properties.schema.registry.url=${SCHEMA_REGISTRY_URL}", \
+            "-Dspring.kafka.consumer.properties.schema.registry.url=${SCHEMA_REGISTRY_URL}", \
             "-Dspring.cloud.stream.schemaRegistryClient.endpoint=${SCHEMA_REGISTRY_URL}", \
             "-jar", \
             "svc-loan-io.jar"]
