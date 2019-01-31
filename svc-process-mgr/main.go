@@ -5,16 +5,8 @@ import (
 	"bytes"
 	"flag"
 	"github.com/Shopify/sarama"
-	// avro "github.com/elodina/go-avro"
-	kavro "github.com/elodina/go-kafka-avro"
-	goavro "github.com/linkedin/goavro"
-	// "github.com/segmentio/kafka-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
-	gavro "gopkg.in/avro.v0"
-	"io/ioutil"
-	// lg "log"
-	// "lss_poc/svc-process-mgr/avro-kafka"
 	"os"
 	"strings"
 )
@@ -100,7 +92,7 @@ func startLoanConsumer() {
 	logger.Print("Started Loan Consumer...")
 
 	for m := range partitionConsumer.Messages() {
-		readAvroLoan(m.Value)
+		readLoanMessage(m.Value[5:])
 	}
 }
 
@@ -149,142 +141,46 @@ func startPaymentConsumer() {
 	logger.Print("Started Payment Consumer....")
 
 	for m := range partitionConsumer.Messages() {
-		readAvroMessage4(m.Value)
+		readPayments(m.Value[5:])
 	}
-}
-
-//uses linkedin/avro
-//doesnt work, fails decoding from binary to native
-//Actual Output
-//   map[string]interface {}{"loanNumber":"", "sourceAccountNumber":"", "currentOwner":""}
-func readAvroMessage(encodedMsg []byte) {
-	// SchemaRegistryClient := avrokafka.NewSchemaRegistryClientWithRetries([]string{schemaRegistryURI}, 2)
-	// schemaCodec, err := SchemaRegistryClient.GetLatestSchema("loan")
-	// if err != nil {
-	// 	logger.Errorf("Failure fetching latest schema for loan: %s", err)
-	// }
-	//
-	// logger.Debug("Schema: ", schemaCodec.Schema())
-
-	schema, err := ioutil.ReadFile("loan.avsc")
-	logger.Println(string(schema))
-	codec, err := goavro.NewCodec(string(schema))
-	if err != nil {
-		logger.Errorf("Failure reading code from schema: %s", err)
-	}
-
-	decoded, original, err := codec.NativeFromBinary(encodedMsg)
-	if err != nil {
-		logger.Errorf("Failure decoding binary data: %s", err)
-		logger.Errorf("Original: %s", original)
-	}
-
-	logger.Printf("%#v", decoded)
-}
-
-//uses github.com/elodina/go-kafka-avro
-//doesnt work
-//Actual output
-//    main.Loan{LoanNumber:"current", SourceAccountNumber:"", CurrentOwner:""}
-//    &main.Payment{LoanNumber:"", AmountInCents:0, SourceAccountNumber:"", SourcePaymentNumber:"", SourceObligationNumber:""}
-func readAvroMessage2(encodedMsg []byte) {
-	decoder := kavro.NewKafkaAvroDecoder(schemaRegistryURI)
-	// decoded, err := decoder.Decode(encodedMsg)
-	// if err != nil {
-	// 	logger.Errorf("Failure decoding avro: %s", err)
-	// }
-	// decodedRecord, ok := decoded.(*avro.GenericRecord)
-	// if !ok {
-	// 	logger.Errorf("Failure casting to GenericRecord")
-	// }
-	// logger.Printf("%v", decodedRecord)
-
-	payment := new(Payment)
-	err := decoder.DecodeSpecific(encodedMsg, payment)
-	if err != nil {
-		logger.Errorf("Failure decoding avro: %s", err)
-	}
-	logger.Printf("%#v", payment)
 }
 
 //uses https://github.com/actgardner/gogen-avro
 //doesnt work
 //Actual output
 //   &main.Loan{LoanNumber:"", SourceAccountNumber:""}
-func readAvroMessage3(encodedMsg []byte) {
+func readPayments(encodedMsg []byte) {
 	r := bytes.NewReader(encodedMsg)
-	logger.Info(encodedMsg)
+	paymentList, err := DeserializePayment_list(r)
+	if err != nil {
+		logger.Errorf("Failure during paymentList deserialization: %s", err)
+	}
+	logger.Printf("%+v", paymentList)
+
+}
+
+//works
+//Output
+// &main.Payment{Paid:true, DatePaid:"2015-12-23", LoanNumber:"2015CA169772974",
+//               AmountInCents:12151, SourceAccountNumber:"8601860", SourcePaymentNumber:"2012323",
+//               SourceObligationNumber:"11544267"}
+func readPay(encodedMsg []byte) {
+	r := bytes.NewReader(encodedMsg)
+	logger.Println(string(encodedMsg))
+	payment, err := DeserializePayment(r)
+	if err != nil {
+		logger.Errorf("Failure during payment deserialization: %s", err)
+	}
+	logger.Printf("%+v", payment)
+
+}
+
+//Works
+func readLoanMessage(encodedMsg []byte) {
+	r := bytes.NewReader(encodedMsg)
 	loan, err := DeserializeLoan(r)
 	if err != nil {
 		logger.Errorf("Failure during loan deserialization: %s", err)
 	}
 	logger.Printf("%#v", loan)
-
-}
-
-//uses https://github.com/go-avro/avro for decoding
-//doesnt work
-//Actual output
-//   &main.Loan{LoanNumber:"current", SourceAccountNumber:""}
-//   &main.Payment{LoanNumber:"", AmountInCents:17, SourceAccountNumber:"aid\":true,\"datePaid\":\"2015-12-23\",
-//     \"loanNumber\":\"2015CA16", SourcePaymentNumber:"", SourceObligationNumber:""}
-//   &main.Payment{Paid:false, DatePaid:"paid\":true,\"dateP", LoanNumber:"", AmountInCents:-53, SourceAccountNumber:"\":\"2015-12-23\",
-//     \"loanNumber\":\"2015CA169772974\",\"amo", SourcePaymentNumber:"", SourceObligationNumber:"tInCents\":12151,
-//     \"sourceAccountNumber\":\"8601860\",\"source"}
-func readAvroMessage4(encodedMsg []byte) {
-
-	// payment_list_schema, err := gavro.ParseSchemaFile("payment_list.avsc")
-	// if err != nil {
-	// 	// Should not happen if the schema is valid
-	// 	logger.Errorf("Failure parsing schema: %s", err)
-	// }
-	payment_schema, err := gavro.ParseSchemaFile("loan.avsc")
-	if err != nil {
-		// Should not happen if the schema is valid
-		logger.Errorf("Failure parsing schema: %s", err)
-	}
-	reader := gavro.NewSpecificDatumReader()
-	// SetSchema must be called before calling Read
-	reader.SetSchema(payment_schema)
-	// Create a new Decoder with a given buffer
-	decoder := gavro.NewBinaryDecoder(encodedMsg)
-
-	decodedRecord := new(Payment)
-
-	// Read data into a given record with a given Decoder.
-	err = reader.Read(decodedRecord, decoder)
-	if err != nil {
-		logger.Errorf("Failure decoding avro: %s", err)
-	}
-
-	logger.Printf("%#v\n", decodedRecord)
-}
-
-func readAvroLoan(encodedMsg []byte) {
-
-	// payment_list_schema, err := gavro.ParseSchemaFile("payment_list.avsc")
-	// if err != nil {
-	// 	// Should not happen if the schema is valid
-	// 	logger.Errorf("Failure parsing schema: %s", err)
-	// }
-	loan_schema, err := gavro.ParseSchemaFile("loan.avsc")
-	if err != nil {
-		// Should not happen if the schema is valid
-		logger.Errorf("Failure parsing schema: %s", err)
-	}
-	reader := gavro.NewSpecificDatumReader()
-	// SetSchema must be called before calling Read
-	reader.SetSchema(loan_schema)
-	// Create a new Decoder with a given buffer
-	decoder := gavro.NewBinaryDecoder(encodedMsg)
-
-	decodedRecord := new(Loan)
-
-	// Read data into a given record with a given Decoder.
-	err = reader.Read(decodedRecord, decoder)
-	if err != nil {
-		logger.Errorf("Failure decoding avro: %s", err)
-	}
-
-	logger.Printf("%#v\n", decodedRecord)
 }

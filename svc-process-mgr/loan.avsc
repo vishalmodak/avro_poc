@@ -4,8 +4,13 @@
   "name": "Loan",
   "version": "1",
   "fields": [
-    { "name": "loanNumber", "type": "string", "doc": "" },
-    { "name": "sourceAccountNumber", "type": "string", "doc": "" },
-    { "name": "currentOwner", "type": "string"}
+    { "name": "status", "type": "string", "doc": "loan status", "default": ""},
+    { "name": "calledDue", "type": "boolean", "default": true, "doc": "" },
+    { "name": "dateClosed", "type": "string", "doc": "", "default": "" },
+    { "name": "dateOpened", "type": "string", "doc": "", "default": "" },
+    { "name": "loanNumber", "type": "string", "doc": "", "default": "" },
+    { "name": "daysPastDue", "type": "int", "doc": "", "default": 0 },
+    { "name": "currentOwner", "type": "string", "doc": "", "default": "" },
+    { "name": "transferFrom", "type": "string", "doc": "", "default": "" }
   ]
 }

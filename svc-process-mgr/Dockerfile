@@ -6,7 +6,6 @@ WORKDIR $appDir
 ADD . $appDir
 RUN go get .
 RUN go build .
-CMD ["/go/src/lss_poc/svc-process-mgr/svc-process-mgr"]
 
 FROM golang:1.10-stretch
 ENV TZ Etc/GMT

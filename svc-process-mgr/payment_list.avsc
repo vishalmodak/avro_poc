@@ -2,13 +2,46 @@
   "type": "record",
   "name": "payment_list",
   "fields": [
-      {
-        "name": "payments",
-        "type": {
-            "type": "array",
-            "items": "payment"
-        },
-        "default": []
-      }
+    {
+      "name": "payments",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "payment",
+          "fields": [
+            {
+              "name": "paid",
+              "type": "boolean"
+            },
+            {
+              "name": "datePaid",
+              "type": "string"
+            },
+            {
+              "name": "loanNumber",
+              "type": "string"
+            },
+            {
+              "name": "amountInCents",
+              "type": "int"
+            },
+            {
+              "name": "sourceAccountNumber",
+              "type": "string"
+            },
+            {
+              "name": "sourcePaymentNumber",
+              "type": "string"
+            },
+            {
+              "name": "sourceObligationNumber",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "default": []
+    }
   ]
 }

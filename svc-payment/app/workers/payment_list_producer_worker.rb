@@ -21,6 +21,6 @@ class PaymentListProducerWorker < ApplicationWorker
       )
     end
 
-    Payment::PaymentResponder.call(paymentList)
+    Payment::PaymentResponder.call(paymentList.avro_message_value)
   end
 end
