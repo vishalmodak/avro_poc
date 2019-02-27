@@ -18,7 +18,7 @@ type Loan struct {
 	CalledDue    bool
 	DateClosed   string
 	DateOpened   string
-	LoanNumber   string
+	LoanNum      string
 	DaysPastDue  int32
 	CurrentOwner string
 	TransferFrom string
@@ -34,7 +34,7 @@ func NewLoan() *Loan {
 	v.CalledDue = true
 	v.DateClosed = ""
 	v.DateOpened = ""
-	v.LoanNumber = ""
+	v.LoanNum = ""
 	v.DaysPastDue = 0
 	v.CurrentOwner = ""
 	v.TransferFrom = ""
@@ -43,7 +43,7 @@ func NewLoan() *Loan {
 }
 
 func (r *Loan) Schema() string {
-	return "{\"fields\":[{\"default\":\"\",\"doc\":\"loan status\",\"name\":\"status\",\"type\":\"string\"},{\"default\":true,\"doc\":\"\",\"name\":\"calledDue\",\"type\":\"boolean\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"dateClosed\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"dateOpened\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"loanNumber\",\"type\":\"string\"},{\"default\":0,\"doc\":\"\",\"name\":\"daysPastDue\",\"type\":\"int\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"currentOwner\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"transferFrom\",\"type\":\"string\"}],\"name\":\"Loan\",\"namespace\":\"com.lss.models\",\"type\":\"record\",\"version\":\"1\"}"
+	return "{\"fields\":[{\"default\":\"\",\"doc\":\"loan status\",\"name\":\"status\",\"type\":\"string\"},{\"default\":true,\"doc\":\"\",\"name\":\"calledDue\",\"type\":\"boolean\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"dateClosed\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"dateOpened\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"loanNum\",\"type\":\"string\"},{\"default\":0,\"doc\":\"\",\"name\":\"daysPastDue\",\"type\":\"int\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"currentOwner\",\"type\":\"string\"},{\"default\":\"\",\"doc\":\"\",\"name\":\"transferFrom\",\"type\":\"string\"}],\"name\":\"Loan\",\"namespace\":\"com.lss.models\",\"type\":\"record\",\"version\":\"1\"}"
 }
 
 func (r *Loan) Serialize(w io.Writer) error {

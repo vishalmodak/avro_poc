@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "namespace": "com.lss.models",
+  "namespace": "com.lending.models",
   "name": "Loan",
   "version": "1",
   "fields": [

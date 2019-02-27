@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.loan.io.kafka.LoanRepository;
-import com.lss.models.Loan;
-import com.lss.models.PaymentList;
+import com.lending.models.Loan;
+import com.lending.models.PaymentList;
 
 
 @RestController

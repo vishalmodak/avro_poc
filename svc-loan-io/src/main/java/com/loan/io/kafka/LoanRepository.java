@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.lss.models.Loan;
+import com.lending.models.Loan;
 
 import tech.allegro.schema.json2avro.converter.JsonAvroConverter;
 

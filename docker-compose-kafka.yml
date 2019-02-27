@@ -1,6 +1,6 @@
 version: '3.4'
 networks:
-  lss:
+  avro:
 
 services:
   zookeeper:
@@ -12,7 +12,7 @@ services:
     ports:
       - "2181:2181"
     networks:
-      - lss
+      - avro
     tty: true
 
   kafka:
@@ -32,7 +32,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - lss
+      - avro
     depends_on:
       - zookeeper
     tty: true
@@ -49,7 +49,7 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_AVRO_COMPATIBILITY_LEVEL: none
     networks:
-      - lss
+      - avro
 
   schema-registry-ui:
     image: landoop/schema-registry-ui
@@ -62,7 +62,7 @@ services:
     depends_on:
       - schema-registry-host
     networks:
-      - lss
+      - avro
     tty: true
 
   # kafka-rest-proxy:
@@ -80,7 +80,7 @@ services:
   #     - kafka
   #     - schema-registry-host
   #   networks:
-  #     - lss
+  #     - avro
   #
   # kafka-topics-ui:
   #   image: landoop/kafka-topics-ui:0.9.4
@@ -114,7 +114,7 @@ services:
   #     CONTROL_CENTER_SCHEMA_REGISTRY_URL: "https://schema-registry-host:8081"
   #     CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_REPLICATION: 1
   #   networks:
-  #     - lss
+  #     - avro
 
   # trifecta:
   #   image: janschultecom/docker-trifecta
@@ -124,7 +124,7 @@ services:
   #   environment:
   #     - ZK_HOST=zookeeper:2181
   #   networks:
-  #     - lss
+  #     - avro
   #   depends_on:
   #     - zookeeper
   #   tty: true

@@ -17,7 +17,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.stereotype.Service;
 
-import com.lss.models.Payment;
+import com.lending.models.Payment;
 
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 

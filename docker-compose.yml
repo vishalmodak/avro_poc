@@ -9,7 +9,7 @@ services:
       - ./docker/json-gen/logs:/json-data-generator/logs
       - ./docker/json-gen/conf:/json-data-generator/conf
     networks:
-      - lss_poc_lss
+      - avro_poc_avro
     tty: true
 
   process-mgr:
@@ -19,7 +19,7 @@ services:
     image: svc-process-mgr
     container_name: svc-process-mgr
     networks:
-      - lss_poc_lss
+      - avro_poc_avro
     environment:
       - KAFKA_BROKER_URI=kafka:29092
       - LOAN_TOPIC_NAME=loan
@@ -36,7 +36,7 @@ services:
     ports:
       - 8000:8080
     networks:
-      - lss_poc_lss
+      - avro_poc_avro
     environment:
       - KAFKA_BROKER_URL=kafka:29092
       - SCHEMA_REGISTRY_URL=http://schema-registry-host:8081
@@ -56,11 +56,11 @@ services:
   #   ports:
   #     - 9000:8080
   #   networks:
-  #     - lss
+  #     - avro
   #   environment:
   #     - KAFKA_BROKER_HOST=kafka
   #   tty: true
 
 networks:
-  lss_poc_lss:
+  avro_poc_avro:
     external: true

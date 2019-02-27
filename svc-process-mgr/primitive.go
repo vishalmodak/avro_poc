@@ -154,7 +154,7 @@ func readLoan(r io.Reader) (*Loan, error) {
 	if err != nil {
 		return nil, err
 	}
-	str.LoanNumber, err = readString(r)
+	str.LoanNum, err = readString(r)
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func writeLoan(r *Loan, w io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = writeString(r.LoanNumber, w)
+	err = writeString(r.LoanNum, w)
 	if err != nil {
 		return err
 	}

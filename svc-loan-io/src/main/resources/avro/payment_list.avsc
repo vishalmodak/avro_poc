@@ -1,13 +1,13 @@
 {
   "type": "record",
-  "namespace": "com.lss.models",
+  "namespace": "com.lending.models",
   "name": "PaymentList",
   "fields": [
       {
         "name": "payments",
         "type": {
             "type": "array",
-            "items": "com.lss.models.Payment"
+            "items": "com.lending.models.Payment"
         },
         "default": []
       }

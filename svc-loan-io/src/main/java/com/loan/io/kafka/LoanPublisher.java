@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import com.lss.models.Loan;
+import com.lending.models.Loan;
 
 @Service
 public class LoanPublisher {
