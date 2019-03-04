@@ -42,6 +42,8 @@ compileTestJava.source(generateAvro.outputs)
 sourceSets.main.java.srcDirs = ['build/generated-main-avro-java','src/main/java']
 
 dependencies {
+    compile "io.micrometer:micrometer-registry-statsd:1.0.5"
+    compile group: 'org.pcollections', name: 'pcollections', version: '3.0.3'
     compile("org.springframework.cloud:spring-cloud-stream-schema:2.0.2.RELEASE")
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-web')
@@ -53,6 +55,7 @@ dependencies {
 	   exclude group:"org.slf4j", module:"slf4j-api"
 	   exclude group:"org.slf4j", module:"slf4j-log4j12"
 	}
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.7'
 	compile group: 'tech.allegro.schema.json2avro', name: 'converter', version: '0.2.8'
 	
 	compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'

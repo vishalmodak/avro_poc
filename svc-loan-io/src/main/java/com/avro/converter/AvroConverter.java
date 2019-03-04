@@ -1,10 +1,11 @@
-package com.loan.io.controller;
+package com.avro.converter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,6 +16,7 @@ import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -106,10 +108,16 @@ public class AvroConverter
         T returnObject = null;
 
         BinaryDecoder jsonDecoder;
-
-        if (json instanceof InputStream)
+        SpecificDatumReader<T> reader = new SpecificDatumReader<T>(schema);
+        try
         {
-            jsonDecoder = DecoderFactory.get().binaryDecoder((InputStream) json, null);
+
+        if (json instanceof InputStream) {
+            byte[] bytes = IOUtils.toByteArray((InputStream)json);
+            ByteBuffer bb = ByteBuffer.wrap(bytes);
+            bb.get(); // consume MAGIC_BYTE
+            bb.getInt(); // consume schemaId
+            jsonDecoder = DecoderFactory.get().binaryDecoder(bytes, bb.position(), bb.remaining(), null);
         } else
         {
             byte[] jsonBytes;
@@ -124,9 +132,7 @@ public class AvroConverter
             jsonDecoder = DecoderFactory.get().binaryDecoder(jsonBytes, null);
         }
 
-        SpecificDatumReader<T> reader = new SpecificDatumReader<T>(schema);
-        try
-        {
+
             returnObject = reader.read(null, jsonDecoder);
         } catch (IOException e)
         {

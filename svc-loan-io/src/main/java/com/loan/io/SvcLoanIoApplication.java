@@ -7,8 +7,12 @@ import org.springframework.cloud.stream.schema.client.ConfluentSchemaRegistryCli
 import org.springframework.cloud.stream.schema.client.EnableSchemaRegistryClient;
 import org.springframework.cloud.stream.schema.client.SchemaRegistryClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.kafka.annotation.EnableKafka;
+
+import com.avro.converter.AvroHttpMessageConverter;
 
 @EnableSchemaRegistryClient
 @SpringBootApplication

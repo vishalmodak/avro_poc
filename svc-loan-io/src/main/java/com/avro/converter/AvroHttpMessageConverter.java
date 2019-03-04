@@ -1,4 +1,4 @@
-package com.loan.io.controller;
+package com.avro.converter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,9 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.stereotype.Component;
 
-public class AvroHttpMessageConverter<T> extends AbstractHttpMessageConverter<Object>
-{
+public class AvroHttpMessageConverter<T> extends AbstractHttpMessageConverter<Object> {
     protected final Log logger = LogFactory.getLog(getClass());
     
     protected String HTTP_HEADER_NAME = "json__TypeId__";
@@ -34,10 +34,7 @@ public class AvroHttpMessageConverter<T> extends AbstractHttpMessageConverter<Ob
     {
         super();
         List<MediaType> supportedMediaTypes = new ArrayList<MediaType>();
-         supportedMediaTypes.add( new MediaType("application", "json", DEFAULT_CHARSET));
-        // supportedMediaTypes.add( new MediaType("application", "*+json",
-        // DEFAULT_CHARSET));
-        supportedMediaTypes.add(new MediaType("avro", "binary", DEFAULT_CHARSET));
+        supportedMediaTypes.add(new MediaType("avro", "binary"));
 
         this.setSupportedMediaTypes(supportedMediaTypes);
     }
@@ -62,7 +59,7 @@ public class AvroHttpMessageConverter<T> extends AbstractHttpMessageConverter<Ob
             return null;
         }
         
-        return (T) AvroConverter.convertFromJson(inputMessage.getBody(), schema, clazz.getClass());
+        return (T) AvroConverter.convertFromJson(inputMessage.getBody(), schema, clazz);
     }
 
     @Override

@@ -6,6 +6,8 @@ ENV KAFKA_BROKER_URL=localhost:9092 \
     LOAN_TOPIC_CONSUME=loanIn \
     LOAN_TOPIC_PRODUCE=loanOut \
     PAYMENT_TOPIC_CONSUME=paymentIn \
+    STATSD_SERVER_HOST=localhost \
+    PAYMENT_SERVICE_HOST=localhost \
     appDir=/usr/src/app
 
 RUN mkdir -p $appDir
@@ -22,7 +24,9 @@ CMD ["java", \
             "-Dloan.topic.consume=${LOAN_TOPIC_CONSUME}", \
             "-Dloan.topic.produce=${LOAN_TOPIC_PRODUCE}", \
             "-Dpayment.topic.produce=${PAYMENT_TOPIC_CONSUME}", \
+            "-Dservice.payments.uri=${PAYMENT_SERVICE_HOST}", \
             "-Dspring.cloud.stream.schemaRegistryClient.endpoint=${SCHEMA_REGISTRY_URL}", \
+            "-Dmanagement.metrics.export.statsd.host=${STATSD_SERVER_HOST}", \
             "-jar", \
             "svc-loan-io.jar"]
 
