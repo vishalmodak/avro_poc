@@ -43,23 +43,24 @@ services:
       - LOAN_TOPIC_CONSUME=loan_intake
       - LOAN_TOPIC_PRODUCE=loan
       - PAYMENT_TOPIC_CONSUME=payment
+      - PAYMENT_SERVICE_HOST=http://payment:3000
+      - STATSD_SERVER_HOST=grafana.dev.enova.com
     tty: true
 
-  # payment:
-  #   build:
-  #     context: ./svc-payment-io
-  #     dockerfile: Dockerfile
-  #   image: payment-svc
-  #   container_name: payment-svc
-  #   depends_on:
-  #     - kafka
-  #   ports:
-  #     - 9000:8080
-  #   networks:
-  #     - avro
-  #   environment:
-  #     - KAFKA_BROKER_HOST=kafka
-  #   tty: true
+  payment:
+    build:
+      context: ./svc-payment
+      dockerfile: Dockerfile
+    image: svc-payment
+    container_name: svc-payment
+    networks:
+      - avro_poc_avro
+    ports:
+      - 3000:3000
+    environment:
+      - KAFKA_BROKER_ADDR=kafka:29092
+      - STATSD_SERVER=grafana.dev.enova.com:8125
+    tty: true
 
 networks:
   avro_poc_avro:
