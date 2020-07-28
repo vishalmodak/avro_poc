@@ -155,7 +155,7 @@ GEM
     jbuilder (2.8.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
-    json (2.1.0)
+    json (2.3.0)
     jsonpath (0.9.9)
       multi_json
       to_regexp (~> 0.2.1)
